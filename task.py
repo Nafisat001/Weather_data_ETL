@@ -6,6 +6,7 @@ import seaborn as sns
 import requests
 import os
 import dotenv
+import time
 
 def get_weather_data(latitude, longitude) -> dict:
     api_key = "d0f963a8c4a7942ce3029ec4fb0ff65f"
@@ -19,21 +20,32 @@ def get_weather_data(latitude, longitude) -> dict:
             result = response.json()
 
             return result
-    
+        else:
+            print("error:", response.status_code)
+            return None
+
+    else:
+        print("API key not found")
+        return None
 
 def extract_current(weather_data):
-    current_weather = ...
+    current_weather = weather_data['weather'][0]['description']
     
     return current_weather
 
 
-def save_to_csv(filename):
+def save_to_csv(filename, weather_data):
     if filename in os.listdir(): # if file already exists
         # populate the csv file
-        pass
+        df = pd.read_csv(filename)
+        new_data = pd.DataFrame(weather_data, index=[0])
+        df = pd.concat([df, new_data], ignore_index=True)
+        df.to_csv(filename, index=False)
     else:
         ## save to the empty file
-        pass
+        df = pd.DataFrame(weather_data, index=[0])
+        df.to_csv(filename, index=False)
+
 
 def get_coord(city):
     # Use this function to get the latitude and longitude
@@ -45,5 +57,23 @@ def get_coord(city):
 
 def main():
     # run the code
-    pass
-    lat, lon = ...
+    city_name= input("Enter city name:")
+
+    latitude, longitude = get_coord(city_name)
+
+    end_time = time.time() + 18000
+
+    while time.time() < end_time:
+
+        weather_data = get_weather_data(latitude, longitude)
+
+        if weather_data:
+            current_weather = extract_current(weather_data)
+            
+            data_to_save = {'City': [city_name], 'Latitude': [latitude], 'Longitude': [longitude], 'Current Weather': [current_weather]}
+            save_to_csv("weather_data.csv", data_to_save)
+            print("Data is saved to weather_data.csv")
+        else:
+            print("Failed to fetch weather data.")
+        time.sleep(600)
+main()
