@@ -57,7 +57,7 @@ def get_coord(city):
 
 def main():
     # run the code
-    city_name= input("Enter city name:")
+    city_name= input("Enter city name: ")
 
     latitude, longitude = get_coord(city_name)
 
