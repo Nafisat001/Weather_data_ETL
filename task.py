@@ -30,7 +30,7 @@ def get_weather_data(latitude, longitude) -> dict:
 
 def extract_current(weather_data):
     current_weather = {
-'description' : weather_data['weather'][0]['description']
+'description' : weather_data['weather'][0]['description'],
 'Temperature' : weather_data['main']['temp'],
 'Humidity' : weather_data['main']['humidity'],
 'Pressure' : weather_data['main']['pressure']
